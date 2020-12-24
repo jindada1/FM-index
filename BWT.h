@@ -28,15 +28,16 @@ private:
     std::string index = "";
     // 索引中第 i 个字符在之前出现过几次
     int* rankofCharAt;
+    int* getRankofCharAt(std::string _index);
+    // 索引中字符 c 的数量
+    std::map<char, int> numofChar;
     // 排好序的索引中字典序小于字符 c 的所有字符个数
     std::map<char, int> numofSmaller;
+    std::map<char, int> getNumofSmaller(std::string _sortedindex);
+
     // 克隆一个排序后的副本
     std::string __cloneSorted(std::string index);
-
-    int* getRankofCharAt(std::string _index);
-
-    std::map<char, int> getNumofSmaller(std::string _sortedindex);
-    
+    // 传入所有解码所需的数据后，返回解码结果
     std::string __decode(std::string _index, int* _rankofCharAt, std::map<char, int>& _numofSmaller);
 
 public:
@@ -52,6 +53,12 @@ public:
 
     // 对给定的 index 解码，输入索引
     std::string decode(std::string index);
+
+    // 根据上一次编码所得的索引，匹配子串 pattern 出现的位置
+    std::string match(std::string pattern);
+
+    // 根据输入的索引，匹配子串 pattern 出现的位置
+    std::string match(std::string _index, std::string pattern);
 
 };
 
@@ -114,24 +121,41 @@ std::string BWT::decode()
     return this->__decode(this->index, this->rankofCharAt, this->numofSmaller);
 }
 
+/** 根据上一次编码所得的索引，匹配子串 pattern 出现的位置 */
+std::string BWT::match(std::string pattern)
+{
+    int cur = pattern.size() - 1;
+
+    char c = pattern[cur];
+    int left = this->numofSmaller[c];
+    int right = left + this->numofChar[c];
+}
+
+/** 根据输入的索引，匹配子串 pattern 出现的位置 */
+std::string BWT::match(std::string _index, std::string pattern)
+{
+
+}
+
 /** 索引中第 i 个字符在之前出现过几次 */
 int* BWT::getRankofCharAt(std::string _index)
 {
     int length = _index.size();
-    // _index 中的第几个 c
-    std::map<char, int> _rankofChar;
     // _index 的第 i 个字符在之前出现过几次
     int* _rankofCharAt = new int[length];
+    // 清空上一次统计的结果
+    this->numofChar.clear();
 
     for (int i = 0; i < length; i++)
     {
         // 获取字符
         char c = _index[i];
-        // 第一次遇见 c，这个 c 是第 0 个
-        if(_rankofChar.count(c) == 0) _rankofChar[c] = 0;
-        else _rankofChar[c] += 1;
+        // 第一次遇见 c，这个 c 是第 1 个，之前出现过 0 次
+        if(this->numofChar.count(c) == 0) this->numofChar[c] = 1;
+        else this->numofChar[c] += 1;
 
-        _rankofCharAt[i] = _rankofChar[c];
+        // 之前出现过 num - 1 次
+        _rankofCharAt[i] = this->numofChar[c] - 1;
     }
 
     return _rankofCharAt;
