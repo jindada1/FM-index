@@ -12,7 +12,7 @@ using namespace std;
 void test(BWT& transformer, string input)
 {
     string index = transformer.encode(input);
-    string origin = transformer.decode(index);
+    string origin = transformer.decode();
 
     cout << (input==origin? "[ ok ]" : "[err ]") << endl;
 }
