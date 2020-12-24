@@ -14,14 +14,7 @@ void test(BWT& transformer, string input)
     string index = transformer.encode(input);
     string origin = transformer.decode(index);
 
-    if (input == origin)
-    {
-        cout << "[ ok]" << endl;    
-    }
-    else
-    {
-        cout << "[err]" << endl;
-    }
+    cout << (input==origin? "[ ok ]" : "[err ]") << endl;
 }
 
 int main()
