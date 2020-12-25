@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 class BWT
 {
@@ -29,7 +30,9 @@ private:
     // 索引中第 i 个字符在之前出现过几次
     int* rankofCharAt;
     int* getRankofCharAt(std::string _index);
-    // 索引中字符 c 的数量
+    // 索引中到第 i 行为止（包括第 i 行），字符 c 出现了多少次
+    std::map<char, int*> occurrence;
+    // （排序的）索引中字符 c 的数量
     std::map<char, int> numofChar;
     // 排好序的索引中字典序小于字符 c 的所有字符个数
     std::map<char, int> numofSmaller;
@@ -47,6 +50,9 @@ public:
 
     // 对给定的 index 编码，输入原始字符串
     std::string encode(std::string origin);
+    
+    // 返回上一次编码所得的索引
+    std::string getIndex() { return this->index; };
 
     // 不传参数就是解码上一次编码所得的索引
     std::string decode();
@@ -60,6 +66,7 @@ public:
     // 根据输入的索引，匹配子串 pattern 出现的位置
     std::string match(std::string _index, std::string pattern);
 
+    std::map<char, int*> getOccurrence(std::string _index);
 };
 
 /** 将原文编码成索引 */
@@ -124,17 +131,36 @@ std::string BWT::decode()
 /** 根据上一次编码所得的索引，匹配子串 pattern 出现的位置 */
 std::string BWT::match(std::string pattern)
 {
-    int cur = pattern.size() - 1;
+    // 如果之前没有编码，即没有索引，就返回空
+    if (this->index == "") return nullptr;
+    // 获取索引长度
+    int len = this->index.size();
+    // 准备好 Occ
+    std::map<char, int*> _occurrence = this->getOccurrence(this->index);
 
-    char c = pattern[cur];
-    int left = this->numofSmaller[c];
-    int right = left + this->numofChar[c];
+    // 从 pattern 的最后一位字符开始匹配
+    int cur = pattern.size() - 1;
+    /** (left, right] 是匹配范围，初始化为最大范围，随和匹配的进行逐步缩小 */
+    int left = 0;
+    int right = len - 1;
+
+    while (left <= right && cur >= 0)
+    {
+        char c = pattern[cur];
+        // 如果 left 位置上也是 c
+        left = this->numofSmaller[c] + _occurrence[c][left] - (this->index[left] == c);
+        right = this->numofSmaller[c] + _occurrence[c][right] - 1;
+        std::cout << std::to_string(cur) << " : " << std::to_string(left) << " , " << std::to_string(right) << std::endl;
+        cur -= 1;
+    }
+    
+    return std::to_string(left) + std::to_string(right);
 }
 
 /** 根据输入的索引，匹配子串 pattern 出现的位置 */
 std::string BWT::match(std::string _index, std::string pattern)
 {
-
+    return "";
 }
 
 /** 索引中第 i 个字符在之前出现过几次 */
@@ -159,6 +185,34 @@ int* BWT::getRankofCharAt(std::string _index)
     }
 
     return _rankofCharAt;
+}
+
+/** 索引中到第 i 行为止（包括第 i 行），字符 c 出现了多少次 */
+std::map<char, int*> BWT::getOccurrence(std::string _index)
+{
+    int length = _index.size();
+    // _index 中第 i 行之前，字符 c 出现了多少次
+    std::map<char, int*> _occurrence;
+    
+    for (int i = 0; i < length; i++)
+    {
+        // 获取字符 c
+        char c = _index[i];
+
+        // 第一次遇见 c，创建关于 c 的数组，并初始化为全零
+        if(_occurrence.count(c) == 0) _occurrence[c] = new int[length]{};
+        
+        // 对于 _occurrence 中的所有字符
+        for(auto &charOcc : _occurrence)
+        {
+            // 先 copy 一份之前统计好的次数，只需讨论一个特殊情况即 i = 0 时
+            charOcc.second[i] = i==0 ? 0 : charOcc.second[i - 1];
+            // 再把现在遇到的这个字符次数 + 1
+            if(charOcc.first == c) charOcc.second[i] += 1;
+        }
+    }
+
+    return _occurrence;
 }
 
 /** 排好序的索引中字典序小于字符 c 的字符数 */

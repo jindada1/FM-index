@@ -20,12 +20,24 @@ void test(BWT& transformer, string input)
 int main()
 {
     int len = 10;
-    BWT bwtInstance;
+    BWT bwtInstance("acaacg");
 
-    while (len < 10000)
+    string index = bwtInstance.getIndex();
+
+    cout << index << endl;
+
+    // 对于 _occurrence 中的所有字符
+    for(auto &charOcc : bwtInstance.getOccurrence(index))
     {
-        // 随机生成测试用例
-        test(bwtInstance, strRand(len));
-        len += len;
+        cout << charOcc.first << ": ";
+        for (size_t i = 0; i < index.size(); i++)
+        {
+            cout << charOcc.second[i] << ", ";
+        }
+        cout << endl;
     }
+
+    cout << bwtInstance.match("ca") << endl;
+
+    return 1;    
 }
