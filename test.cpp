@@ -21,20 +21,20 @@ int main()
 {
     int len = 10;
 
-    BWT bwtInstance;
+    // BWT bwtInstance;
 
-    while (len < 10000)
-    {
-        // 随机生成测试用例
-        test(bwtInstance, strRand(len));
-        len += len;
-    }
+    // while (len < 10000)
+    // {
+    //     // 随机生成测试用例
+    //     test(bwtInstance, strRand(len));
+    //     len += len;
+    // }
 
-    BWT bwtInstance2("acaacg");
+    BWT bwtInstance2("googol");
 
-    string index = bwtInstance2.getIndex();
+    cout << bwtInstance2.getIndex() << endl;
 
-    cout << bwtInstance2.match("ca") << endl;
-    
-    return 1;    
+    for (auto pos:bwtInstance2.match("gol")) cout << pos << ", ";
+
+    return 1;
 }

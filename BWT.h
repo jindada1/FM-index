@@ -62,11 +62,7 @@ public:
     std::string decode(std::string index);
 
     // 根据上一次编码所得的索引，匹配子串 pattern 出现的位置
-    std::string match(std::string pattern);
-
-    // 根据输入的索引，匹配子串 pattern 出现的位置
-    std::string match(std::string _index, std::string pattern);
-
+    std::vector<int> match(std::string pattern);
 };
 
 /** 将原文编码成索引 */
@@ -110,10 +106,12 @@ std::string BWT::decode()
 }
 
 /** 根据上一次编码所得的索引，匹配子串 pattern 出现的位置 */
-std::string BWT::match(std::string pattern)
+std::vector<int> BWT::match(std::string pattern)
 {
+    std::vector<int> result;
     // 如果之前没有编码，即没有索引，就返回空
-    if (this->index == "") return nullptr;
+    if (this->index == "") return result;
+
     // 获取索引长度
     int len = this->index.size();
     // 准备好 Occ
@@ -125,6 +123,8 @@ std::string BWT::match(std::string pattern)
     int left = 0;
     int right = len - 1;
 
+    if (occurrence.count(pattern[cur]) == 0) return result;
+
     while (left <= right && cur >= 0)
     {
         char c = pattern[cur];
@@ -134,13 +134,13 @@ std::string BWT::match(std::string pattern)
         cur -= 1;
     }
     
-    return std::to_string(left) + std::to_string(right);
-}
-
-/** 根据输入的索引，匹配子串 pattern 出现的位置 */
-std::string BWT::match(std::string _index, std::string pattern)
-{
-    return "";
+    while (left <= right)
+    {
+        result.push_back(this->SA[left]);
+        left += 1;
+    }
+    
+    return result;
 }
 
 /** 索引中到第 i 行为止（包括第 i 行），字符 c 出现了多少次 */
