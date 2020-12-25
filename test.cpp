@@ -9,32 +9,55 @@ using namespace std;
 /***
  * 测试
 **/
-void test(BWT& transformer, string input)
-{
-    string index = transformer.encode(input);
-    string origin = transformer.decode();
-
-    cout << (input==origin? "[ ok ]" : "[err ]") << endl;
-}
-
-int main()
+void test_BWT_encode_decode()
 {
     int len = 10;
+    BWT bwtInstance;
 
-    // BWT bwtInstance;
+    while (len < 10000)
+    {
+        // 随机生成测试用例
+        string input = strRand(len);
+        // 编码
+        string index = bwtInstance.encode(input);
+        // 再解码
+        string decode = bwtInstance.decode();
 
-    // while (len < 10000)
-    // {
-    //     // 随机生成测试用例
-    //     test(bwtInstance, strRand(len));
-    //     len += len;
-    // }
+        cout << (input == decode ? "[ ok ]" : "[err ]") << endl;
+        len += len;
+    }
+}
 
+void test_BWT_match()
+{
     BWT bwtInstance2("gowwwwww");
 
     cout << bwtInstance2.getIndex() << endl;
 
     for (auto pos:bwtInstance2.match("googol", "gol")) cout << pos << ", ";
+}
 
+void test_MTF()
+{
+    string text = "bananaaa";
+
+    cout << text << endl;
+
+    int *result = new int[text.size()];
+
+    MTFEncode(text, result);
+
+    for (size_t i = 0; i < text.size(); i++)
+    {
+        cout << result[i] << ", ";
+    }
+    cout << endl;
+    
+    cout << MTFDecode(result, text.size()) << endl;
+}
+
+int main()
+{
+    test_MTF();
     return 1;
 }
