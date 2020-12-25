@@ -71,8 +71,9 @@ std::string BWT::encode(std::string origin)
     
      std::vector<int> sa = suffix_array(row);
      index = ""
+     std::string sortedindex = "";
      for(auto w : sa)
-         index.push_back(w ? row[w-1] : '$');
+         index.push_back(w ? row[w-1] : '$'), sortedindex.push_back(row[w]);
      
 /*
     // 编码过程中使用的排序后的轮转位移矩阵
@@ -99,11 +100,11 @@ std::string BWT::encode(std::string origin)
         sortedindex += row.substr(0, 1);
         index += row.substr(length - 1, 1);
     }
-
+*/
     // 准备好辅助信息，便于后续操作
     this->rankofCharAt = this->getRankofCharAt(index);
     this->numofSmaller = this->getNumofSmaller(sortedindex);
-*/
+
     return index;
 }
 
