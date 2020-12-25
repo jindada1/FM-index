@@ -30,11 +30,11 @@ int main()
     //     len += len;
     // }
 
-    BWT bwtInstance2("googol");
+    BWT bwtInstance2("gowwwwww");
 
     cout << bwtInstance2.getIndex() << endl;
 
-    for (auto pos:bwtInstance2.match("gol")) cout << pos << ", ";
+    for (auto pos:bwtInstance2.match("googol", "gol")) cout << pos << ", ";
 
     return 1;
 }

@@ -61,8 +61,11 @@ public:
     // 对给定的 index 解码，输入索引
     std::string decode(std::string index);
 
-    // 根据上一次编码所得的索引，匹配子串 pattern 出现的位置
+    // 在上一次编码的字符串中，匹配子串 pattern 出现的位置
     std::vector<int> match(std::string pattern);
+
+    // 在输入的 origin 中，匹配子串 pattern 出现的位置
+    std::vector<int> match(std::string origin, std::string pattern);
 };
 
 /** 将原文编码成索引 */
@@ -105,7 +108,7 @@ std::string BWT::decode()
     return this->__decode(this->index, this->occurrence, this->numofSmaller);
 }
 
-/** 根据上一次编码所得的索引，匹配子串 pattern 出现的位置 */
+/** 在上一次编码的字符串中，匹配子串 pattern 出现的位置 */
 std::vector<int> BWT::match(std::string pattern)
 {
     std::vector<int> result;
@@ -141,6 +144,15 @@ std::vector<int> BWT::match(std::string pattern)
     }
     
     return result;
+}
+
+/** 在输入的 origin 中，匹配子串 pattern 出现的位置 */
+std::vector<int> BWT::match(std::string origin, std::string pattern)
+{
+    // 先编码建索引
+    this->encode(origin);
+    // 再匹配
+    return this->match(pattern);
 }
 
 /** 索引中到第 i 行为止（包括第 i 行），字符 c 出现了多少次 */
