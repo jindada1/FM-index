@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include "sa.h"
 
 class BWT
 {
@@ -65,9 +66,15 @@ public:
 /** 将原文编码成索引 */
 std::string BWT::encode(std::string origin)
 {
-    std::string row = "$" + origin;
-    int length = row.size();
-
+     std::string row = origin + "$";
+     int length = row.size();
+    
+     std::vector<int> sa = suffix_array(row);
+     index = ""
+     for(auto w : sa)
+         index.push_back(w ? row[w-1] : '$');
+     
+/*
     // 编码过程中使用的排序后的轮转位移矩阵
     std::vector<std::string> sortedCyclicShiftedMatrix;
     for (int i = 0; i < length; i++)
@@ -96,7 +103,7 @@ std::string BWT::encode(std::string origin)
     // 准备好辅助信息，便于后续操作
     this->rankofCharAt = this->getRankofCharAt(index);
     this->numofSmaller = this->getNumofSmaller(sortedindex);
-
+*/
     return index;
 }
 
