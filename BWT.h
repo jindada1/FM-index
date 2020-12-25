@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <iostream>
+#include "sa.h"
 
 class BWT
 {
@@ -72,9 +72,16 @@ public:
 /** 将原文编码成索引 */
 std::string BWT::encode(std::string origin)
 {
-    std::string row = "$" + origin;
-    int length = row.size();
-
+     std::string row = origin + "$";
+     int length = row.size();
+    
+     std::vector<int> sa = suffix_array(row);
+     index = ""
+     std::string sortedindex = "";
+     for(auto w : sa)
+         index.push_back(w ? row[w-1] : '$'), sortedindex.push_back(row[w]);
+     
+/*
     // 编码过程中使用的排序后的轮转位移矩阵
     std::vector<std::string> sortedCyclicShiftedMatrix;
     for (int i = 0; i < length; i++)
@@ -99,7 +106,7 @@ std::string BWT::encode(std::string origin)
         sortedindex += row.substr(0, 1);
         index += row.substr(length - 1, 1);
     }
-
+*/
     // 准备好辅助信息，便于后续操作
     this->rankofCharAt = this->getRankofCharAt(index);
     this->numofSmaller = this->getNumofSmaller(sortedindex);
@@ -150,7 +157,6 @@ std::string BWT::match(std::string pattern)
         // 如果 left 位置上也是 c
         left = this->numofSmaller[c] + _occurrence[c][left] - (this->index[left] == c);
         right = this->numofSmaller[c] + _occurrence[c][right] - 1;
-        std::cout << std::to_string(cur) << " : " << std::to_string(left) << " , " << std::to_string(right) << std::endl;
         cur -= 1;
     }
     
