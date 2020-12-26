@@ -41,23 +41,61 @@ void test_MTF()
 {
     string text = "bananaaa";
 
+    string code = MTFEncode(text);
+
     cout << text << endl;
 
-    int *result = new int[text.size()];
+    cout << code << endl;
 
-    MTFEncode(text, result);
+    cout << MTFDecode(code) << endl;
+}
 
-    for (size_t i = 0; i < text.size(); i++)
-    {
-        cout << result[i] << ", ";
-    }
-    cout << endl;
+void test_RLE()
+{
+    string a = "aaaaaaaabbbb";
     
-    cout << MTFDecode(result, text.size()) << endl;
+    string code = RLEncode(a);
+    cout << code << endl;
+
+    cout << RLDecode(code) << endl;
 }
 
 int main()
 {
-    test_MTF();
+    // test_MTF();
+    // test_RLE();
+
+    BWT bwtInstance;
+
+    const int length = 10;
+    string text = "bananabananabananabananabananabanana";
+    cout << "origin text: " << text << endl;
+
+    // BWT 变换
+    string bwtIndex = bwtInstance.encode(text);
+    cout << "BWT encode: " << bwtIndex << endl;
+
+    // cout << RLEncode(bwtIndex) << endl;
+
+    // MTF 编码
+    string mtfCode = MTFEncode(bwtIndex);
+    cout << "MTF encode: " << mtfCode << endl;
+
+    // RLE 压缩
+    string rleCode = RLEncode(mtfCode);
+    cout << "RLE compress: " << rleCode << endl;
+
+    // RLE 解压
+    string DecompressedCode = RLDecode(rleCode);
+    cout << "RLE decompress" << DecompressedCode << endl;
+
+    // MTF 解码
+    string decodedIndex = MTFDecode(DecompressedCode);
+    cout << "MTF decode: " << decodedIndex << endl;
+
+    // BWT 解码
+    string originText = bwtInstance.decode(decodedIndex);
+    cout << "BWT decode: " << originText << endl;
+
     return 1;
 }
